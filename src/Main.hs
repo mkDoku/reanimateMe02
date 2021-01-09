@@ -11,6 +11,7 @@ main :: IO ()
 main = reanimate
   $ docEnv
   $ staticFrame 1
+  $ scale 3.5
     staticStar
 
 staticStar :: SVG
