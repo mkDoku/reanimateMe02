@@ -29,7 +29,7 @@ main = reanimate
 main :: IO ()
 main = reanimate
   $ docEnv
-  animationStaticStar
+  animationStaticStar90
 ```
 
 ![A static star rotated by 90 degrees](./images/staticStar90.gif)
