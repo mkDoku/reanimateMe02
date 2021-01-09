@@ -21,3 +21,4 @@ executable reanimateMe02
                      , reanimate
                      , reanimate-svg
                      , linear
+                     , text
