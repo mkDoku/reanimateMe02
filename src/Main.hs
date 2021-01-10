@@ -16,7 +16,7 @@ import           Text.Printf
 main :: IO ()
 main = reanimate
   $ docEnv
-  animationStaticStar90
+  animationPolarCoordinates
 
 -- |
 -- phi
@@ -30,6 +30,84 @@ ratio = 16/9
 
 
 -----------------------------------------------------------------------------
+
+-- |
+-- Static animation to demonstrate polar coordiantes
+animationPolarCoordinates :: Animation
+animationPolarCoordinates =
+  -- adjust viewport
+    mapA (withViewBox (-0.5*ratio, -0.5, 1.5*ratio, 1.5))
+  $ chainT parA
+  -- Will only produce one frame. Awesome!
+  -- (1/60) will work for mp4 but not gif
+  $ staticFrame (3/60)
+  <$> [ xAxis
+      , yAxis
+      , pointPolar phi
+      , rVector    phi
+      , phiShow    phi
+      ]
+
+-- |
+-- Generate SVG of a point with text
+-- of the coordinates (polar coordinates)
+pointPolar :: Double -> SVG
+pointPolar ang = translate x y $ mkGroup
+ [
+      withFillOpacity 1
+    $ withFillColor "black"
+    $ withStrokeColor "white"
+    $ mkCircle 0.01
+  ,
+      translate 0.05 0
+    $ withFillColor "black"
+    $ withFillOpacity 1
+    $ scaleToHeight 0.08
+    $ latex txt
+ ]
+  where (V2 x y) = fromPolarU ang
+        txt      =   T.pack
+                   $ printf "($r$,$\\phi$) = (%1.1f,%2.0f\\degree)" (1.0 :: Double) ang
+
+rVector :: Double -> SVG
+rVector ang = mkGroup
+ [ projectionLine (0,0) (x,y)
+ ,
+     translate (x/2-0.04) (y/2+0.04)
+   $ withFillColor "black"
+   $ withFillOpacity 1
+   $ scaleToHeight 0.05
+   $ latex txt
+ ]
+  where (V2 x y) = fromPolarU ang
+        txt      =   T.pack
+                   $ printf "$\\vec{r}$"
+
+phiShow :: Double -> SVG
+phiShow ang = mkGroup
+ [  withStrokeWidth 0.002
+  $ withStrokeColor "blue"
+  $ phiCircle 100 ang
+ ,
+     translate 0.1 0.05
+   $ withFillColor "black"
+   $ withFillOpacity 1
+   $ scaleToHeight 0.06
+   $ latex
+   $ T.pack
+   $ printf "$\\phi$"
+ ]
+
+phiCircle :: Int -> Double -> SVG
+phiCircle segments ang =
+  mkLinePath $ trans $ (* (ang/segments')) <$> range
+    where
+      trans     = fmap ( (\(V2 x y) -> (x, y)) . fromPolar 0.2 )
+      range     = fromIntegral <$> [0..segments]
+      segments' = fromIntegral segments
+
+
+
 
 -- |
 -- Static animation to demonstrate Cartesian coordiantes

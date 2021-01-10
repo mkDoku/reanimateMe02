@@ -29,7 +29,7 @@ main = reanimate
 main :: IO ()
 main = reanimate
   $ docEnv
-  animationStaticStar
+  animationStaticStar90
 ```
 
 ![A static star rotated by 90 degrees](./images/staticStar90.gif)
@@ -44,3 +44,15 @@ main = reanimate
 ```
 
 ![Coordinates of point in Cartesian coordinates](./images/PointCartesian.gif)
+
+
+### Demo polar coordinates
+
+```haskell
+main :: IO ()
+main = reanimate
+  $ docEnv
+  animationPolarCoordinates
+```
+
+![Coordinates of point in polar coordinates](./images/PointPolar.gif)
