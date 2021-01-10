@@ -36,7 +36,7 @@ ratio = 16/9
 animationPolarCoordinates :: Animation
 animationPolarCoordinates =
   -- adjust viewport
-    mapA (withViewBox (-0.5*ratio, -0.5, 1.5*ratio, 1.5))
+    mapA (withViewBox (-0.15*ratio, -0.15, 1.1*ratio, 1.1))
   $ chainT parA
   -- Will only produce one frame. Awesome!
   -- (1/60) will work for mp4 but not gif
@@ -114,7 +114,8 @@ phiCircle segments ang =
 animationCartesianCoordinates :: Animation
 animationCartesianCoordinates =
   -- adjust viewport
-    mapA (withViewBox (-0.5*ratio, -0.5, 1.5*ratio, 1.5))
+    mapA (withViewBox (-0.15*ratio, -0.15, 1.1*ratio, 1.1))
+--    mapA (withViewBox (-0.5*ratio, -0.5, 1.5*ratio, 1.5))
   $ chainT parA
   -- Will only produce one frame. Awesome!
   -- (1/60) will work for mp4 but not gif
