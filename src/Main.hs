@@ -16,7 +16,7 @@ import           Text.Printf
 main :: IO ()
 main = reanimate
   $ docEnv
-  animationStaticStar90
+  animationStaticDot
 
 -- |
 -- phi
@@ -29,6 +29,8 @@ ratio :: Double
 ratio = 16/9
 
 
+-----------------------------------------------------------------------------
+-- First Part (Cartesian and polar coordinates)
 -----------------------------------------------------------------------------
 
 -- |
@@ -287,3 +289,30 @@ fromPolar r ang = V2 x y
 -- Transform from degrees to radian
 fromDegrees :: Floating a => a -> a
 fromDegrees deg = deg * pi / 180
+
+-----------------------------------------------------------------------------
+-- Second Part (`Scene` and `Var`)
+-----------------------------------------------------------------------------
+
+animationStaticDot :: Animation
+animationStaticDot =
+    mapA (withViewBox (-1.5*ratio,  -1.5, 3*ratio, 3))
+  $ setDuration (3/60)
+  $ scene firstScene
+
+animationFirstScene :: Animation
+animationFirstScene =
+    mapA (withViewBox (-1.5*ratio,  -1.5, 3*ratio, 3))
+  $ setDuration (3/60)
+  $ scene firstScene
+
+firstScene = do
+  newSpriteSVG_ dot
+
+dot :: SVG
+dot =
+    withFillOpacity 1
+  $ withFillColor "blue"
+  $ withStrokeColor "white"
+  $ mkCircle 0.02
+

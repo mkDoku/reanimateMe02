@@ -78,3 +78,15 @@ main = reanimate
 ```
 
 ![Coordinates of point in polar coordinates](./images/PointPolar.gif)
+
+
+### Static dot
+
+```haskell
+main :: IO ()
+main = reanimate
+  $ docEnv
+  animationStaticDot
+```
+
+![A static blue dot](./images/staticDot.gif)
