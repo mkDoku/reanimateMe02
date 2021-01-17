@@ -16,7 +16,7 @@ import           Text.Printf
 main :: IO ()
 main = reanimate
   $ docEnv
-  animationPolarCoordinates
+  animationStaticStar90
 
 -- |
 -- phi
@@ -39,13 +39,12 @@ animationPolarCoordinates =
     mapA (withViewBox (-0.15*ratio, -0.15, 1.1*ratio, 1.1))
   $ chainT parA
   -- Will only produce one frame. Awesome!
-  -- (1/60) will work for mp4 but not gif
+  -- (1/60) will work for mp4 but not for gif
   $ staticFrame (3/60)
   <$> [ xAxis
       , yAxis
       , pointPolar phi
       , rVector    phi
-      , phiShow    phi
       ]
 
 -- |
@@ -105,8 +104,6 @@ phiCircle segments ang =
       trans     = fmap ( (\(V2 x y) -> (x, y)) . fromPolar 0.2 )
       range     = fromIntegral <$> [0..segments]
       segments' = fromIntegral segments
-
-
 
 
 -- |
@@ -211,19 +208,39 @@ ticLine = (.) (   withStrokeColor "black"
 
 -----------------------------------------------------------------------------
 
+animationIncorrectStaticStar :: Animation
+animationIncorrectStaticStar =
+    staticFrame (3/60)
+  $ withStrokeWidth  0.01
+  $ mkLinePathClosed coordsCartesian
+  where
+    coordsCartesian =
+      transformCoord . fromPolarU <$> coordsInPolar
+    transformCoord (V2 x y) = (x, y)
+
 animationStaticStar90 :: Animation
 animationStaticStar90 =
-    staticFrame (3/60) $ scale 3.5 staticStar90
+    mapA (withViewBox (-1.5*ratio,  -1.5, 3*ratio, 3))
+    $ staticFrame (3/60) $ staticStar90
 
 animationStaticStar :: Animation
 animationStaticStar =
-    staticFrame (3/60) $ scale 3.5 staticStar
+    staticFrame (3/60) $ staticStar
+
+animationStaticStarView :: Animation
+animationStaticStarView =
+    mapA (withViewBox (-1.5*ratio,  -1.5, 3*ratio, 3))
+  $ staticFrame (3/60)
+  $ staticStar
 
 staticStar90 :: SVG
 staticStar90 =
-  mkLinePathClosed $ trans coordsInPolar
+    withStrokeWidth 0.01
+  $ mkLinePathClosed coordsCartesianRearranged90
     where
-      trans = fmap ( (\(V2 x y) -> (x, y)) . fromPolarU . (+90) )
+      coordsCartesianRearranged90 =
+        transformCoord . fromPolarU . (+90) <$> coordsInPolarRearranged
+      transformCoord (V2 x y) = (x, y)
 
 -- |
 -- Draw symmetric pentagram by using
@@ -231,19 +248,27 @@ staticStar90 =
 -- set of the unit circle
 staticStar :: SVG
 staticStar =
-  mkLinePathClosed coordsInCartesianU
+    withStrokeWidth  0.01
+  $ mkLinePathClosed coordsCartesianRearranged
+  where
+    coordsCartesianRearranged =
+      transformCoord . fromPolarU <$> coordsInPolarRearranged
+    transformCoord (V2 x y) = (x, y)
 
 -- |
 -- Take the coordinates for the pentagram in
 -- polar coordinates (0+72*n) with n = 0..5
 -- and transform them into Cartesian coordinates
 coordsInCartesianU :: [(Double, Double)]
-coordsInCartesianU = fmap ( (\(V2 x y) -> (x, y)) . fromPolarU ) coordsInPolar
+coordsInCartesianU = fmap ( (\(V2 x y) -> (x, y)) . fromPolarU ) coordsInPolarRearranged
 
 -- |
 -- Polar coordinates on the unit circle
 coordsInPolar :: [Double]
-coordsInPolar = [0, 144, 288, 72, 216]
+coordsInPolar = [0, 72, 144, 216, 288]
+
+coordsInPolarRearranged :: [Double]
+coordsInPolarRearranged = [0, 144, 288, 72, 216]
 
 -- |
 -- Transform polar coordinates to Cartesian coordinates (unit circle)

@@ -12,6 +12,17 @@ stack ./src/Main.hs -- render -w 3840 -h 2160 --compile --format gif
 
 ## Animations
 
+### Static star (incorrect)
+
+```haskell
+main :: IO ()
+main = reanimate
+  $ docEnv
+  animationStaticStar
+```
+
+![A incorrect static star](./images/incorrect.gif)
+
 ### Static star
 
 ```haskell
@@ -22,6 +33,17 @@ main = reanimate
 ```
 
 ![A static star](./images/staticStar.gif)
+
+### Static star (changed view)
+
+```haskell
+main :: IO ()
+main = reanimate
+  $ docEnv
+  animationStaticStarView
+```
+
+![A static star with changed view](./images/staticStarView.gif)
 
 ### Static star (rotated by 90°)
 
