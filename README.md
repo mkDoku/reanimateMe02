@@ -18,7 +18,7 @@ stack ./src/Main.hs -- render -w 3840 -h 2160 --compile --format gif
 main :: IO ()
 main = reanimate
   $ docEnv
-  animationStaticStar
+  animationIncorrectStaticStar
 ```
 
 ![A incorrect static star](./images/incorrect.gif)
