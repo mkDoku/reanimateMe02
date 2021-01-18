@@ -16,7 +16,7 @@ import           Text.Printf
 main :: IO ()
 main = reanimate
   $ docEnv
-  animationStaticDot
+  animationJumpingDot
 
 -- |
 -- phi
@@ -300,18 +300,35 @@ animationStaticDot =
   $ setDuration (3/60)
   $ scene firstScene
 
-animationFirstScene :: Animation
-animationFirstScene =
+animationJumpingDot :: Animation
+animationJumpingDot =
     mapA (withViewBox (-1.5*ratio,  -1.5, 3*ratio, 3))
-  $ setDuration (3/60)
-  $ scene firstScene
+  $ scene secondScene
 
+firstScene :: Scene s ()
 firstScene = do
-  newSpriteSVG_ dot
+  newSpriteSVG_ $ dot (fromPolarU 0)
 
-dot :: SVG
-dot =
-    withFillOpacity 1
+secondScene :: Scene s ()
+secondScene = do
+  currentPosition <- newVar $ fromPolarU 0
+  newSprite_ $ dot <$> unVar currentPosition
+
+  wait 1
+
+  let moveDot newPos = do
+      writeVar currentPosition newPos
+      wait 1
+
+  moveDot (fromPolarU 72)
+  moveDot (fromPolarU 144)
+  moveDot (fromPolarU 216)
+  moveDot (fromPolarU 288)
+
+dot :: V2 Double -> SVG
+dot (V2 x y) =
+    translate x y
+  $ withFillOpacity 1
   $ withFillColor "blue"
   $ withStrokeColor "white"
   $ mkCircle 0.02

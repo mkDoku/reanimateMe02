@@ -90,3 +90,14 @@ main = reanimate
 ```
 
 ![A static blue dot](./images/staticDot.gif)
+
+### Jumping dot
+
+```haskell
+main :: IO ()
+main = reanimate
+  $ docEnv
+  animationJumpingDot
+```
+
+![A jumping blue dot](./images/jumpingDot.gif)
