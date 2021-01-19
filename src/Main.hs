@@ -16,7 +16,7 @@ import           Text.Printf
 main :: IO ()
 main = reanimate
   $ docEnv
-  animationJumpingDot
+  animationSmoothDot
 
 -- |
 -- phi
@@ -305,6 +305,11 @@ animationJumpingDot =
     mapA (withViewBox (-1.5*ratio,  -1.5, 3*ratio, 3))
   $ scene secondScene
 
+animationSmoothDot :: Animation
+animationSmoothDot =
+    mapA (withViewBox (-1.5*ratio,  -1.5, 3*ratio, 3))
+  $ scene thirdScene
+
 firstScene :: Scene s ()
 firstScene = do
   newSpriteSVG_ $ dot (fromPolarU 0)
@@ -324,6 +329,37 @@ secondScene = do
   moveDot (fromPolarU 144)
   moveDot (fromPolarU 216)
   moveDot (fromPolarU 288)
+
+thirdScene :: Scene s ()
+thirdScene = do
+  currentPosition <- newVar $ fromPolarU 0
+  newSprite_ $ dot <$> unVar currentPosition
+
+  wait 1
+
+  let moveDot (V2 x' y') = do
+      -- read and store current position
+      -- before modifying it
+      (V2 x y) <- readVar currentPosition
+      -- calculate dx and dy, so the coordinate difference
+      -- between start and end coordinate
+      --
+      -- this is handy, because the `t` value later on
+      -- ranges from 0 to 1
+      let (deltaX, deltaY) = (x'-x, y'-y)
+      -- modify the value of the current position over
+      -- a duration of 2 seconds (120 Frames)
+      -- This modification will add the differences dx and dy
+      -- incrementally over time => smooth movement
+      tweenVar currentPosition 2
+        $ \_ t -> V2 (x+deltaX*t) (y+deltaY*t)
+      wait 1
+
+  moveDot (fromPolarU 72)
+  moveDot (fromPolarU 144)
+  moveDot (fromPolarU 216)
+  moveDot (fromPolarU 288)
+  moveDot (fromPolarU 360)
 
 dot :: V2 Double -> SVG
 dot (V2 x y) =
