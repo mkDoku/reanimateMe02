@@ -113,3 +113,16 @@ main = reanimate
 ```
 
 ![A smooth moving blue dot](./images/smoothDot.gif)
+
+
+### Creative Star
+
+```haskell
+main :: IO ()
+main = reanimate
+  $ docEnv
+  animationCreativeStar
+```
+
+![A star changing color and scale over time](./images/creative.gif)
+

@@ -16,7 +16,7 @@ import           Text.Printf
 main :: IO ()
 main = reanimate
   $ docEnv
-  animationSmoothDot
+  animationCreativeStar
 
 -- |
 -- phi
@@ -310,6 +310,11 @@ animationSmoothDot =
     mapA (withViewBox (-1.5*ratio,  -1.5, 3*ratio, 3))
   $ scene thirdScene
 
+animationCreativeStar :: Animation
+animationCreativeStar =
+    mapA (withViewBox (-1.5*ratio,  -1.5, 3*ratio, 3))
+  $ scene fourthScene
+
 firstScene :: Scene s ()
 firstScene = do
   newSpriteSVG_ $ dot (fromPolarU 0)
@@ -369,3 +374,53 @@ dot (V2 x y) =
   $ withStrokeColor "white"
   $ mkCircle 0.02
 
+
+-- |
+-- Modification of `thirdScene` to use `staticStar90`
+-- and some "creative" changes
+--
+-- Polar coordinate, i.e. the angle, are used as variable
+-- instead of Cartesian coordinate in `thirdScene`
+fourthScene :: Scene s ()
+fourthScene = do
+  currentAngle <- newVar 0
+  newSprite_ $ rotatedStar <$> unVar currentAngle
+
+  let moveSprite ang' = do
+      ang <- readVar currentAngle
+      let deltaAng = ang'-ang
+      tweenVar currentAngle 2
+        $ \_ t -> ang+deltaAng*t
+
+  moveSprite  72
+  moveSprite 144
+  moveSprite 216
+  moveSprite 288
+  moveSprite 360
+
+
+-- |
+-- Added changing color
+-- Added rotation around the center
+-- Added weird scaling behavior
+--
+-- to `staticStar90`
+rotatedStar :: Double -> SVG
+rotatedStar ang = translate x y
+  $ rotateAroundCenter (ang*4)
+  $ scale (fromInteger ( rem (round ang) 72) / 72)
+  $ withFillOpacity 1
+  $ withFillColor (chooseFillColor ang)
+  $ scale 0.5 staticStar90
+  where
+    (V2 x y) = fromPolarU ang
+
+-- |
+-- Change color of star according to it's position
+chooseFillColor :: Double -> String
+chooseFillColor ang
+ | ang <  72 = "blue"
+ | ang < 144 = "yellow"
+ | ang < 218 = "green"
+ | ang < 288 = "red"
+ | otherwise = "olive"
